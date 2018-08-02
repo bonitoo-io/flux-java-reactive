@@ -24,6 +24,7 @@ package io.bonitoo.flux;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import javax.annotation.Nonnull;
 
 import io.bonitoo.flux.events.FluxErrorEvent;
@@ -73,7 +74,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
     }
 
     @Test
-    void fluxQueryWithOptions() {
+    void queryWithOptions() {
 
         fluxServer.enqueue(createResponse());
 
@@ -106,6 +107,60 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
 
             return true;
         });
+    }
+
+    @Test
+    void queryWithParameters() throws InterruptedException {
+
+        fluxServer.enqueue(createResponse());
+
+        HashMap<String, Object> properties = new HashMap<>();
+        properties.put("n", 5);
+
+        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database").limit().withPropertyNamed("n"), properties);
+        results
+                .take(1)
+                .test()
+                .assertValueCount(1);
+
+        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("q"))
+                .isEqualTo("from(db:\"flux_database\")|> limit(n: 5)");
+    }
+
+    @Test
+    void queryPublisherWithParameters() throws InterruptedException {
+
+        fluxServer.enqueue(createResponse());
+
+        HashMap<String, Object> properties = new HashMap<>();
+        properties.put("n", 5);
+
+        Flux query = Flux.from("flux_database").limit().withPropertyNamed("n");
+        Flowable<FluxResult> results = fluxClient.flux(Flowable.just(query), properties);
+        results
+                .take(1)
+                .test()
+                .assertValueCount(1);
+
+        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("q"))
+                .isEqualTo("from(db:\"flux_database\")|> limit(n: 5)");
+    }
+
+    @Test
+    void stringQuery() throws InterruptedException {
+
+        fluxServer.enqueue(createResponse());
+
+        String query = "from(db:\"telegraf\") |> " +
+                "filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
+
+        Flowable<FluxResult> results = fluxClient.flux(query);
+        results
+                .take(1)
+                .test()
+                .assertValueCount(1);
+
+        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("q")).isEqualTo(query);
     }
 
     @Test

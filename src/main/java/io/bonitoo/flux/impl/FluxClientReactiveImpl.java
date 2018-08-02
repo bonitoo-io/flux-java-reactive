@@ -80,6 +80,23 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
     }
 
     @Override
+    public Flowable<FluxResult> flux(@Nonnull final String query) {
+
+        Preconditions.checkNonEmptyString(query, "Flux query");
+
+        return flux(query, FluxOptions.DEFAULTS);
+    }
+
+    @Override
+    public Flowable<FluxResult> flux(@Nonnull final String query, @Nonnull final FluxOptions options) {
+
+        Preconditions.checkNonEmptyString(query, "Flux query");
+        Objects.requireNonNull(options, "FluxOptions are required");
+
+        return flux(new StringFlux(query), options);
+    }
+
+    @Override
     public Flowable<FluxResult> flux(@Nonnull final Flux query) {
 
         Objects.requireNonNull(query, "Flux is required");

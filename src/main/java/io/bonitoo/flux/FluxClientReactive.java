@@ -45,6 +45,24 @@ import org.reactivestreams.Publisher;
 @Experimental
 public interface FluxClientReactive {
 
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query the flux query to execute
+     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * {@link Flowable#empty()} if none found.
+     */
+    Flowable<FluxResult> flux(@Nonnull final String query);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query   the flux query to execute
+     * @param options the options for the query
+     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * {@link Flowable#empty()} if none found.
+     */
+    Flowable<FluxResult> flux(@Nonnull final String query, @Nonnull final FluxOptions options);
 
     /**
      * Execute a Flux against the Flux service.
