@@ -1,7 +1,7 @@
 # flux-java-reactive
 
 [![Build Status](https://img.shields.io/circleci/project/github/bonitoo-io/flux-java-reactive/master.svg)](https://circleci.com/gh/bonitoo-io/flux-java-reactive/tree/master)
-[![codecov](https://codecov.io/gh/bonitoo-io/flux-java-reactive/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/flux-java)
+[![codecov](https://codecov.io/gh/bonitoo-io/flux-java-reactive/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/flux-java-reactive)
 [![License](https://img.shields.io/github/license/bonitoo-io/flux-java-reactive.svg)](https://github.com/bonitoo-io/flux-java-reactive/blob/master/LICENSE)
 [![Snapshot Version](https://img.shields.io/nexus/s/https/apitea.com/nexus/io.bonitoo.flux/flux-java-reactive.svg)](https://apitea.com/nexus/content/repositories/bonitoo-snapshot/)
 [![GitHub issues](https://img.shields.io/github/issues-raw/bonitoo-io/flux-java-reactive.svg)](https://github.com/bonitoo-io/flux-java-reactive/issues)
