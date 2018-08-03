@@ -33,8 +33,10 @@ import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.annotations.Experimental;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.reactivestreams.Publisher;
+import retrofit2.Response;
 
 /**
  * The reactive client for the Flux service.
@@ -52,6 +54,7 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final String query);
 
     /**
@@ -62,7 +65,27 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final String query, @Nonnull final FluxOptions options);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query the flux query to execute
+     * @return {@link Maybe} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final String query);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query   the flux query to execute
+     * @param options the options for the query
+     * @return {@link Maybe} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final String query, @Nonnull final FluxOptions options);
 
     /**
      * Execute a Flux against the Flux service.
@@ -71,6 +94,7 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final Flux query);
 
     /**
@@ -81,6 +105,7 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final FluxOptions options);
 
     /**
@@ -91,6 +116,7 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final Map<String, Object> properties);
 
     /**
@@ -102,6 +128,7 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final Flux query,
                               @Nonnull final Map<String, Object> properties,
                               @Nonnull final FluxOptions options);
@@ -114,6 +141,7 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
                               @Nonnull final Map<String, Object> properties);
 
@@ -126,9 +154,76 @@ public interface FluxClientReactive {
      * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
+    @Nonnull
     Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
                               @Nonnull final Map<String, Object> properties,
                               @Nonnull final FluxOptions options);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query the flux query to execute
+     * @return {@link Maybe} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query   the flux query to execute
+     * @param options the options for the query
+     * @return {@link Maybe} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query, @Nonnull final FluxOptions options);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query      the flux query to execute
+     * @param properties named properties
+     * @return {@link Maybe} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query, @Nonnull final Map<String, Object> properties);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param query      the flux query to execute
+     * @param properties named properties
+     * @param options    the options for the query
+     * @return {@link Maybe} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query,
+                                          @Nonnull final Map<String, Object> properties,
+                                          @Nonnull final FluxOptions options);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param queryStream the flux query to execute
+     * @param properties  named properties
+     * @return {@link Flowable} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Flowable<Response<ResponseBody>> fluxRaw(@Nonnull final Publisher<Flux> queryStream,
+                                             @Nonnull final Map<String, Object> properties);
+
+    /**
+     * Execute a Flux against the Flux service.
+     *
+     * @param queryStream the flux query to execute
+     * @param properties  named properties
+     * @param options     the options for the query
+     * @return {@link Flowable} emitting a raw {@code Response<ResponseBody>} which are matched the query
+     */
+    @Nonnull
+    Flowable<Response<ResponseBody>> fluxRaw(@Nonnull final Publisher<Flux> queryStream,
+                                             @Nonnull final Map<String, Object> properties,
+                                             @Nonnull final FluxOptions options);
 
     /**
      * Listen the events produced by {@link FluxClientReactive}.

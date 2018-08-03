@@ -61,7 +61,7 @@ docker run --detach --name flux --publish 8093:8093 quay.io/influxdb/flux:${FLUX
 
 test -t 1 && USE_TTY="-t"
 
-mvn clean install
+mvn clean install -U
 
 docker kill influxdb || true
 docker kill flux || true

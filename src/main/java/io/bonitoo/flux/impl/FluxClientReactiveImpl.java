@@ -79,6 +79,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
         serviceBuilder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
     }
 
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final String query) {
 
@@ -87,6 +88,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
         return flux(query, FluxOptions.DEFAULTS);
     }
 
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final String query, @Nonnull final FluxOptions options) {
 
@@ -96,44 +98,68 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
         return flux(new StringFlux(query), options);
     }
 
+    @Nonnull
+    @Override
+    public Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final String query) {
+
+        Preconditions.checkNonEmptyString(query, "Flux query");
+
+        return fluxRaw(query, FluxOptions.DEFAULTS);
+    }
+
+    @Nonnull
+    @Override
+    public Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final String query, @Nonnull final FluxOptions options) {
+
+        Preconditions.checkNonEmptyString(query, "Flux query");
+        Objects.requireNonNull(options, "FluxOptions are required");
+
+        return fluxRaw(new StringFlux(query), options);
+    }
+
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final Flux query) {
 
-        Objects.requireNonNull(query, "Flux is required");
+        Objects.requireNonNull(query, "Flux query is required");
 
         return flux(query, FluxOptions.DEFAULTS);
     }
 
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final FluxOptions options) {
 
-        Objects.requireNonNull(query, "Flux is required");
+        Objects.requireNonNull(query, "Flux query is required");
         Objects.requireNonNull(options, "FluxOptions are required");
 
         return flux(query, new HashMap<>(), options);
     }
 
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final Map<String, Object> properties) {
 
-        Objects.requireNonNull(query, "Flux is required");
+        Objects.requireNonNull(query, "Flux query is required");
         Objects.requireNonNull(properties, "Parameters are required");
 
         return flux(query, properties, FluxOptions.DEFAULTS);
     }
 
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final Flux query,
                                      @Nonnull final Map<String, Object> properties,
                                      @Nonnull final FluxOptions options) {
 
-        Objects.requireNonNull(query, "Flux is required");
+        Objects.requireNonNull(query, "Flux query is required");
         Objects.requireNonNull(properties, "Parameters are required");
         Objects.requireNonNull(options, "FluxOptions are required");
 
         return flux(Flowable.just(query), properties, options);
     }
 
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
                                      @Nonnull final Map<String, Object> properties) {
@@ -143,6 +169,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
         return flux(queryStream, properties, FluxOptions.DEFAULTS);
     }
 
+    @Nonnull
     @Override
     public Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
                                      @Nonnull final Map<String, Object> properties,
@@ -178,6 +205,83 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                             Observable::empty)
                     .toFlowable(BackpressureStrategy.BUFFER);
         });
+    }
+
+    @Nonnull
+    @Override
+    public Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query) {
+
+        Objects.requireNonNull(query, "Flux query is required");
+
+        return fluxRaw(query, FluxOptions.DEFAULTS);
+    }
+
+    @Nonnull
+    @Override
+    public Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query, @Nonnull final FluxOptions options) {
+
+        Objects.requireNonNull(query, "Flux query is required");
+        Objects.requireNonNull(options, "FluxOptions are required");
+
+        return fluxRaw(query, new HashMap<>(), options);
+    }
+
+    @Nonnull
+    @Override
+    public Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query,
+                                                 @Nonnull final Map<String, Object> properties) {
+
+        Objects.requireNonNull(query, "Flux query is required");
+        Objects.requireNonNull(properties, "Parameters are required");
+
+        return fluxRaw(query, properties, FluxOptions.DEFAULTS);
+    }
+
+    @Nonnull
+    @Override
+    public Maybe<Response<ResponseBody>> fluxRaw(@Nonnull final Flux query,
+                                                 @Nonnull final Map<String, Object> properties,
+                                                 @Nonnull final FluxOptions options) {
+
+        Objects.requireNonNull(query, "Flux query is required");
+        Objects.requireNonNull(properties, "Parameters are required");
+        Objects.requireNonNull(options, "FluxOptions are required");
+
+        return fluxRaw(Flowable.just(query), properties, options).singleElement();
+    }
+
+    @Nonnull
+    @Override
+    public Flowable<Response<ResponseBody>> fluxRaw(@Nonnull final Publisher<Flux> queryStream,
+                                                    @Nonnull final Map<String, Object> properties) {
+
+        Objects.requireNonNull(queryStream, "Flux stream is required");
+        Objects.requireNonNull(properties, "Parameters are required");
+
+        return fluxRaw(queryStream, properties, FluxOptions.DEFAULTS);
+    }
+
+    @Nonnull
+    public Flowable<Response<ResponseBody>> fluxRaw(@Nonnull final Publisher<Flux> queryStream,
+                                                    @Nonnull final Map<String, Object> properties,
+                                                    @Nonnull final FluxOptions options) {
+
+        Objects.requireNonNull(queryStream, "Flux stream is required");
+        Objects.requireNonNull(properties, "Parameters are required");
+        Objects.requireNonNull(options, "FluxOptions are required");
+
+        return Flowable
+                .fromPublisher(queryStream)
+                .concatMap((Function<Flux, Publisher<Response<ResponseBody>>>) flux -> {
+
+                    //
+                    // Parameters
+                    //
+                    String orgID = this.fluxConnectionOptions.getOrgID();
+                    String query = toFluxString(flux, properties, options);
+
+                    return fluxService.queryRaw(query, orgID).toFlowable(BackpressureStrategy.BUFFER);
+                });
     }
 
     @Nonnull

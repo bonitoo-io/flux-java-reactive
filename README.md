@@ -42,6 +42,18 @@ Flux query = Flux
 Flowable<FluxResult> results = fluxClient.flux(query);
 ```
 
+#### Handling server response
+
+There are two possibilities how to handle server response:
+1. Mapping to the `FluxResult` POJO ([mentioned above](#flux-query))
+2. Use directly server response to the custom handling
+
+##### Custom Handling  
+```java
+Flowable<Response<ResponseBody>> result = fluxClient.fluxRaw(query);
+```
+
+
 #### Query configuration
 
 The Flux query can be configured by `FluxOptions`. For detail information about query configuration look at [flux-java client](https://github.com/bonitoo-io/flux-java#query-configuration).

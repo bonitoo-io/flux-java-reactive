@@ -45,11 +45,11 @@ jobs:
 
     - run:
         name: Resolve dependencies
-        command: mvn dependency:resolve-plugins dependency:go-offline
+        command: mvn dependency:resolve-plugins dependency:go-offline -U
 
     - run:
         name: Test 
-        command: mvn clean cobertura:cobertura-integration-test
+        command: mvn clean cobertura:cobertura-integration-test -U
 
     - run:
         name: Report Code Coverage to CodeCov
@@ -57,7 +57,7 @@ jobs:
 
     - run:
         name: Build & Deploy
-        command: mvn clean deploy -s config/deploy-settings.xml
+        command: mvn clean deploy -s config/deploy-settings.xml -U
 
     - save_cache:
         paths:

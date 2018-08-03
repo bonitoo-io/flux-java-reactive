@@ -45,6 +45,12 @@ public interface FluxServiceReactive {
     Observable<ResponseBody> query(@Query(value = "q", encoded = true) String query,
                                    @Query(value = "orgID", encoded = true) String orgID);
 
+    @Streaming
+    @POST("/v1/query")
+    @Nonnull
+    Observable<Response<ResponseBody>> queryRaw(@Query(value = "q", encoded = true) String query,
+                                                @Query(value = "orgID", encoded = true) String orgID);
+
     @GET("/ping")
     Maybe<Response<ResponseBody>> ping();
 }
