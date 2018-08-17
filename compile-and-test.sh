@@ -27,8 +27,13 @@
 #
 set -e
 
-INFLUXDB_VERSION="1.6"
-FLUX_VERSION="nightly"
+DEFAULT_INFLUXDB_VERSION="1.6"
+DEFAULT_MAVEN_JAVA_VERSION="3-jdk-8-slim"
+DEFAULT_FLUX_VERSION="nightly"
+
+INFLUXDB_VERSION="${INFLUXDB_VERSION:-$DEFAULT_INFLUXDB_VERSION}"
+MAVEN_JAVA_VERSION="${MAVEN_JAVA_VERSION:-$DEFAULT_MAVEN_JAVA_VERSION}"
+FLUX_VERSION="${FLUX_VERSION:-$DEFAULT_FLUX_VERSION}"
 
 echo "Run tests on InfluxDB-${INFLUXDB_VERSION} with Flux-${FLUX_VERSION}"
 
@@ -66,7 +71,14 @@ docker pull quay.io/influxdb/flux:${FLUX_VERSION}
 sleep 3
 docker run --detach --net=influxdb --name flux --publish 8093:8093 quay.io/influxdb/flux:${FLUX_VERSION}
 
-mvn clean install
+docker run -it --rm \
+       --volume ${PWD}:/usr/src/mymaven \
+       --volume ${PWD}/.m2:/root/.m2 \
+       --workdir /usr/src/mymaven \
+       --net=influxdb \
+       --env INFLUXDB_VERSION=${INFLUXDB_VERSION} \
+       --env INFLUXDB_IP=influxdb \
+       maven:${MAVEN_JAVA_VERSION} mvn clean install -U
 
 docker kill influxdb || true
 docker kill flux || true
