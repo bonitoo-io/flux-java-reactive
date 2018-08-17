@@ -32,15 +32,25 @@ FLUX_VERSION="nightly"
 
 echo "Run tests on InfluxDB-${INFLUXDB_VERSION} with Flux-${FLUX_VERSION}"
 
+docker kill influxdb || true
+docker rm influxdb || true
+docker kill flux || true
+docker rm flux || true
+docker network remove influxdb || true
+
+#
+# Create network
+#
+docker network create influxdb
+
 #
 # InfluxDB
 #
-docker kill influxdb || true
-docker rm influxdb || true
 docker pull influxdb:${INFLUXDB_VERSION}-alpine || true
 docker run \
           --detach \
           --name influxdb \
+          --net=influxdb \
           --publish 8086:8086 \
           --publish 8082:8082 \
           --publish 8089:8089/udp \
@@ -50,18 +60,13 @@ docker run \
 #
 # Flux
 #
-docker kill flux || true
-docker rm flux || true
-
 docker pull quay.io/influxdb/flux:${FLUX_VERSION}
 
 # wait for InfluxDB
 sleep 3
-docker run --detach --name flux --publish 8093:8093 quay.io/influxdb/flux:${FLUX_VERSION}
+docker run --detach --net=influxdb --name flux --publish 8093:8093 quay.io/influxdb/flux:${FLUX_VERSION}
 
-test -t 1 && USE_TTY="-t"
-
-mvn clean install -U
+mvn clean install
 
 docker kill influxdb || true
 docker kill flux || true

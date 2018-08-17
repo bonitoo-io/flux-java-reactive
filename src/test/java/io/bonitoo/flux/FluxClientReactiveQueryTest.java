@@ -123,7 +123,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .test()
                 .assertValueCount(1);
 
-        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("q"))
+        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("query"))
                 .isEqualTo("from(db:\"flux_database\")|> limit(n: 5)");
     }
 
@@ -142,7 +142,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .test()
                 .assertValueCount(1);
 
-        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("q"))
+        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("query"))
                 .isEqualTo("from(db:\"flux_database\")|> limit(n: 5)");
     }
 
@@ -160,7 +160,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .test()
                 .assertValueCount(1);
 
-        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("q")).isEqualTo(query);
+        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("query")).isEqualTo(query);
     }
 
     @Test

@@ -1,5 +1,8 @@
 # flux-java-reactive
 
+> This library is under development and no stable version has been released yet.  
+> The API can change at any moment.
+
 [![Build Status](https://img.shields.io/circleci/project/github/bonitoo-io/flux-java-reactive/master.svg)](https://circleci.com/gh/bonitoo-io/flux-java-reactive/tree/master)
 [![codecov](https://codecov.io/gh/bonitoo-io/flux-java-reactive/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/flux-java-reactive)
 [![License](https://img.shields.io/github/license/bonitoo-io/flux-java-reactive.svg)](https://github.com/bonitoo-io/flux-java-reactive/blob/master/LICENSE)

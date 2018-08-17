@@ -262,6 +262,7 @@
 					<execution>
 						<goals>
 							<goal>prepare-agent</goal>
+							<goal>prepare-agent-integration</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -269,6 +270,13 @@
 						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report-integration</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>report-integration</goal>
 						</goals>
 					</execution>
 				</executions>

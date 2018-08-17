@@ -40,16 +40,16 @@ import retrofit2.http.Streaming;
 public interface FluxServiceReactive {
 
     @Streaming
-    @POST("/v1/query")
+    @POST("/query")
     @Nonnull
-    Observable<ResponseBody> query(@Query(value = "q", encoded = true) String query,
-                                   @Query(value = "orgID", encoded = true) String orgID);
+    Observable<ResponseBody> query(@Query(value = "query", encoded = true) String query,
+                                   @Query(value = "organization", encoded = true) String orgID);
 
     @Streaming
-    @POST("/v1/query")
+    @POST("/query")
     @Nonnull
-    Observable<Response<ResponseBody>> queryRaw(@Query(value = "q", encoded = true) String query,
-                                                @Query(value = "orgID", encoded = true) String orgID);
+    Observable<Response<ResponseBody>> queryRaw(@Query(value = "query", encoded = true) String query,
+                                                @Query(value = "organization", encoded = true) String orgID);
 
     @GET("/ping")
     Maybe<Response<ResponseBody>> ping();
