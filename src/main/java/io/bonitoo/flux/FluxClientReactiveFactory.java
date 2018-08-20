@@ -32,7 +32,7 @@ import io.bonitoo.flux.options.FluxConnectionOptions;
  * The Factory that create a reactive instance of a Flux client.
  *
  * @author Jakub Bednar (bednar@github) (26/06/2018 11:13)
- * @since 3.0.0
+ * @since 1.0.0
  */
 public final class FluxClientReactiveFactory {
 

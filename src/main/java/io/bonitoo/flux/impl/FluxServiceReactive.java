@@ -35,7 +35,7 @@ import retrofit2.http.Streaming;
 
 /**
  * @author Jakub Bednar (bednar@github) (26/06/2018 12:33)
- * @since 3.0.0
+ * @since 1.0.0
  */
 public interface FluxServiceReactive {
 

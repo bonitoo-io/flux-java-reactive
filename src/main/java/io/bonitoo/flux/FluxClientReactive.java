@@ -42,7 +42,7 @@ import retrofit2.Response;
  * The reactive client for the Flux service.
  *
  * @author Jakub Bednar (bednar@github) (26/06/2018 11:07)
- * @since 3.0.0
+ * @since 1.0.0
  */
 @Experimental
 public interface FluxClientReactive {
