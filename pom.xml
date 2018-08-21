@@ -218,7 +218,7 @@
 					</mapping>
 					<useDefaultExcludes>false</useDefaultExcludes>
 					<includes>**, **/META-INF/services/**</includes>
-					<excludes>**/target/**, **/*.jar, **/.git/**, **/.*, **/*.png, *.iml, .idea/**, **/.m2/**, LICENSE, **/*.md
+					<excludes>**/target/**, **/*.jar, **/.git/**, **/.*, **/*.png, *.iml, .idea/**, **/*nightly*/**, **/.m2/**, LICENSE, **/*.md
 					</excludes>
 				</configuration>
 				<executions>

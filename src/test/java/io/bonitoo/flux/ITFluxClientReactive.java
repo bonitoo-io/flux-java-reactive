@@ -48,7 +48,6 @@ import org.junit.runner.RunWith;
  * @author Jakub Bednar (bednar@github) (28/06/2018 07:59)
  */
 @RunWith(JUnitPlatform.class)
-@DisabledIfSystemProperty(named = "FLUX_DISABLE", matches = "true")
 class ITFluxClientReactive extends AbstractITFluxClientReactive {
 
     @BeforeEach
@@ -359,6 +358,7 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "FLUX_DISABLE", matches = "true")
     void ping() {
 
         fluxClient

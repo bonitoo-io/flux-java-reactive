@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
@@ -38,7 +39,9 @@ import io.bonitoo.flux.options.query.TaskOption;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
 import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.assertj.core.api.Assertions;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -123,8 +126,8 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .test()
                 .assertValueCount(1);
 
-        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("query"))
-                .isEqualTo("from(db:\"flux_database\")|> limit(n: 5)");
+        Assertions.assertThat(queryFromRequest())
+                .isEqualToIgnoringWhitespace("from(db:\"flux_database\") |> limit(n: 5)");
     }
 
     @Test
@@ -142,8 +145,8 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .test()
                 .assertValueCount(1);
 
-        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("query"))
-                .isEqualTo("from(db:\"flux_database\")|> limit(n: 5)");
+        Assertions.assertThat(queryFromRequest())
+                .isEqualToIgnoringWhitespace("from(db:\"flux_database\") |> limit(n: 5)");
     }
 
     @Test
@@ -160,7 +163,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .test()
                 .assertValueCount(1);
 
-        Assertions.assertThat(fluxServer.takeRequest().getRequestUrl().queryParameter("query")).isEqualTo(query);
+        Assertions.assertThat(queryFromRequest()).isEqualToIgnoringWhitespace(query);
     }
 
     @Test
@@ -332,5 +335,14 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                         + ",,3,1677-09-21T00:12:43.145224192Z,2018-06-27T06:22:38.347437344Z,2018-06-27T05:56:40.001Z,10000,upTime,server_performance,\"Area 1° 10' \"\"20\",false";
 
         return createResponse(data);
+    }
+
+    @Nullable
+    private String queryFromRequest() throws InterruptedException {
+
+        RecordedRequest recordedRequest = fluxServer.takeRequest();
+        String body = recordedRequest.getBody().readUtf8();
+
+        return new JSONObject(body).getString("query");
     }
 }
