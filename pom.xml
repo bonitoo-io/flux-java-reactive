@@ -242,7 +242,8 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven-surefire.version}</version>
 				<configuration>
-					<argLine>-DFLUX_DISABLE=true</argLine>
+                    <!--suppress MavenModelInspection -->
+                    <argLine>-DFLUX_DISABLE=true ${argLine}</argLine>
 				</configuration>
 				<executions>
 					<execution>

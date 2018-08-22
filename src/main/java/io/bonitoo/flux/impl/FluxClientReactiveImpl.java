@@ -188,7 +188,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
             String query = toFluxString(flux, properties, options);
 
             return fluxService
-                    .query(orgID, createBody(query))
+                    .query(orgID, createBody(query, options))
                     .flatMap(
                             // success response
                             body -> chunkReader(query, this.fluxConnectionOptions, body, options.getParserOptions()),
@@ -280,7 +280,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                     String orgID = this.fluxConnectionOptions.getOrgID();
                     String query = toFluxString(flux, properties, options);
 
-                    return fluxService.queryRaw(orgID, createBody(query)).toFlowable(BackpressureStrategy.BUFFER);
+                    return fluxService.queryRaw(orgID, createBody(query, options)).toFlowable(BackpressureStrategy.BUFFER);
                 });
     }
 

@@ -90,6 +90,9 @@ fluxClient.listenEvents(FluxErrorEvent.class).subscribe(event -> {
 ### Advanced Usage
 
 #### Gzip's support 
+
+> Currently unsupported by `flux` server.
+
 flux-java client doesn't enable gzip compress for http request body by default. If you want to enable gzip to reduce transfer data's size , you can call:
 
 ```java
