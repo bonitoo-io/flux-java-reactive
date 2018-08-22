@@ -280,7 +280,9 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                     String orgID = this.fluxConnectionOptions.getOrgID();
                     String query = toFluxString(flux, properties, options);
 
-                    return fluxService.queryRaw(orgID, createBody(query, options)).toFlowable(BackpressureStrategy.BUFFER);
+                    return fluxService
+                            .queryRaw(orgID, createBody(query, options))
+                            .toFlowable(BackpressureStrategy.BUFFER);
                 });
     }
 
