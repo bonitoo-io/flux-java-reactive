@@ -29,7 +29,7 @@ There are two possibilities how to create Flux query:
 ```java
 String query = "from(db:\"telegraf\") |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
 
-Flowable<FluxResult> results = fluxClient.flux(query);
+Flowable<FluxTable> tables = fluxClient.flux(query);
 ```
 
 #### Build-in operators
@@ -42,13 +42,13 @@ Flux query = Flux
     .groupBy("_measurement")
     .difference();
 
-Flowable<FluxResult> results = fluxClient.flux(query);
+Flowable<FluxTable> tables = fluxClient.flux(query);
 ```
 
 #### Handling server response
 
 There are two possibilities how to handle server response:
-1. Mapping to the `FluxResult` POJO ([mentioned above](#flux-query))
+1. Mapping to the `FluxTable`s POJO ([mentioned above](#flux-query))
 2. Use directly server response to the custom handling
 
 ##### Custom Handling  

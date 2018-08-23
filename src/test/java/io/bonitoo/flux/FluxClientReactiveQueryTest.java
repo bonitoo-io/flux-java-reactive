@@ -30,8 +30,7 @@ import javax.annotation.Nullable;
 
 import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
-import io.bonitoo.flux.mapper.FluxResult;
-import io.bonitoo.flux.mapper.Record;
+import io.bonitoo.flux.mapper.FluxRecord;
 import io.bonitoo.flux.options.FluxCsvParserOptions;
 import io.bonitoo.flux.options.FluxOptions;
 import io.bonitoo.flux.options.query.TaskOption;
@@ -61,8 +60,8 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .listenEvents(FluxSuccessEvent.class)
                 .test();
 
-        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database"));
-        results
+        Flowable<FluxRecord> records = fluxClient.flux(Flux.from("flux_database"));
+        records
                 .take(1)
                 .test()
                 .assertValueCount(1);
@@ -94,11 +93,11 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
 
         FluxOptions options = FluxOptions.builder().addOption(task).build();
 
-        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database"), options);
-        results
-                .take(1)
+        Flowable<FluxRecord> records = fluxClient.flux(Flux.from("flux_database"), options);
+        records
+                .take(6)
                 .test()
-                .assertValueCount(1);
+                .assertValueCount(6);
 
         listener.assertValueCount(1).assertValue(event -> {
 
@@ -120,11 +119,11 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
         HashMap<String, Object> properties = new HashMap<>();
         properties.put("n", 5);
 
-        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database").limit().withPropertyNamed("n"), properties);
-        results
-                .take(1)
+        Flowable<FluxRecord> fluxResults = fluxClient.flux(Flux.from("flux_database").limit().withPropertyNamed("n"), properties);
+        fluxResults
+                .take(6)
                 .test()
-                .assertValueCount(1);
+                .assertValueCount(6);
 
         Assertions.assertThat(queryFromRequest())
                 .isEqualToIgnoringWhitespace("from(db:\"flux_database\") |> limit(n: 5)");
@@ -139,11 +138,11 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
         properties.put("n", 5);
 
         Flux query = Flux.from("flux_database").limit().withPropertyNamed("n");
-        Flowable<FluxResult> results = fluxClient.flux(Flowable.just(query), properties);
+        Flowable<FluxRecord> results = fluxClient.flux(Flowable.just(query), properties);
         results
-                .take(1)
+                .take(7)
                 .test()
-                .assertValueCount(1);
+                .assertValueCount(6);
 
         Assertions.assertThat(queryFromRequest())
                 .isEqualToIgnoringWhitespace("from(db:\"flux_database\") |> limit(n: 5)");
@@ -157,7 +156,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
         String query = "from(db:\"telegraf\") |> " +
                 "filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
 
-        Flowable<FluxResult> results = fluxClient.flux(query);
+        Flowable<FluxRecord> results = fluxClient.flux(query);
         results
                 .take(1)
                 .test()
@@ -176,7 +175,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .listenEvents(FluxErrorEvent.class)
                 .test();
 
-        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database"));
+        Flowable<FluxRecord> results = fluxClient.flux(Flux.from("flux_database"));
         results
                 .take(1)
                 .test()
@@ -197,65 +196,58 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
     }
 
     @Test
-    void parsingToFluxResult() {
+    void parsingToFluxRecords() {
 
         fluxServer.enqueue(createResponse());
 
-        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database"));
+        Flowable<FluxRecord> results = fluxClient.flux(Flux.from("flux_database"));
         results
-                .take(1)
+                .take(6)
                 .test()
-                .assertValueCount(1)
-                .assertValue(fluxResult -> {
-
-                    Assertions.assertThat(fluxResult).isNotNull();
-                    return true;
-                });
+                .assertValueCount(6);
     }
 
     @Test
-    void parsingToFluxResultMultiTable() {
+    void parsingToFluxRecordsMultiTable() {
 
         fluxServer.enqueue(createMultiTableResponse());
 
-        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database"));
+        Flowable<FluxRecord> results = fluxClient.flux(Flux.from("flux_database"));
         results
-                .take(1)
+                .take(4)
                 .test()
-                .assertValueCount(1)
-                .assertValue(fluxResult -> {
-
-                    Assertions.assertThat(fluxResult).isNotNull();
-                    Assertions.assertThat(fluxResult.getTables().size() == 4).isTrue();
+                .assertValueCount(4)
+                .assertValueAt(0, fluxRecord -> {
 
                     {
-                        Record rec = fluxResult.getTables().get(0).getRecords().get(0);
+                        Assertions.assertThat(fluxRecord.getValue()).isEqualTo(50d);
+                        Assertions.assertThat(fluxRecord.getField()).isEqualTo("cpu_usage");
 
-                        Assertions.assertThat(rec.getValue()).isEqualTo(50d);
-                        Assertions.assertThat(rec.getField()).isEqualTo("cpu_usage");
+                        Assertions.assertThat(fluxRecord.getStart()).isEqualTo(Instant.parse("1677-09-21T00:12:43.145224192Z"));
+                        Assertions.assertThat(fluxRecord.getStop()).isEqualTo(Instant.parse("2018-06-27T06:22:38.347437344Z"));
+                        Assertions.assertThat(fluxRecord.getTime()).isEqualTo(Instant.parse("2018-06-27T05:56:40.001Z"));
 
-                        Assertions.assertThat(rec.getStart()).isEqualTo(Instant.parse("1677-09-21T00:12:43.145224192Z"));
-                        Assertions.assertThat(rec.getStop()).isEqualTo(Instant.parse("2018-06-27T06:22:38.347437344Z"));
-                        Assertions.assertThat(rec.getTime()).isEqualTo(Instant.parse("2018-06-27T05:56:40.001Z"));
-
-                        Assertions.assertThat(rec.getMeasurement()).isEqualTo("server_performance");
-                        Assertions.assertThat(rec.getTags().get("location")).isEqualTo("Area 1° 10' \"20");
-                        Assertions.assertThat(rec.getTags().get("production_usage")).isEqualTo("false");
+                        Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("server_performance");
+                        Assertions.assertThat(fluxRecord.getValues())
+                                .hasEntrySatisfying("location", value -> Assertions.assertThat(value).isEqualTo("Area 1° 10' \"20"))
+                                .hasEntrySatisfying("production_usage", value -> Assertions.assertThat(value).isEqualTo("false"));
                     }
 
+                    return true;
+                }).assertValueAt(2, fluxRecord -> {
+
                     {
-                        Record rec = fluxResult.getTables().get(2).getRecords().get(0);
+                        Assertions.assertThat(fluxRecord.getValue()).isEqualTo("Server no. 1");
+                        Assertions.assertThat(fluxRecord.getField()).isEqualTo("server description");
 
-                        Assertions.assertThat(rec.getValue()).isEqualTo("Server no. 1");
-                        Assertions.assertThat(rec.getField()).isEqualTo("server description");
+                        Assertions.assertThat(fluxRecord.getStart()).isEqualTo(Instant.parse("1677-09-21T00:12:43.145224192Z"));
+                        Assertions.assertThat(fluxRecord.getStop()).isEqualTo(Instant.parse("2018-06-27T06:22:38.347437344Z"));
+                        Assertions.assertThat(fluxRecord.getTime()).isEqualTo(Instant.parse("2018-06-27T05:56:40.001Z"));
 
-                        Assertions.assertThat(rec.getStart()).isEqualTo(Instant.parse("1677-09-21T00:12:43.145224192Z"));
-                        Assertions.assertThat(rec.getStop()).isEqualTo(Instant.parse("2018-06-27T06:22:38.347437344Z"));
-                        Assertions.assertThat(rec.getTime()).isEqualTo(Instant.parse("2018-06-27T05:56:40.001Z"));
-
-                        Assertions.assertThat(rec.getMeasurement()).isEqualTo("server_performance");
-                        Assertions.assertThat(rec.getTags().get("location")).isEqualTo("Area 1° 10' \"20");
-                        Assertions.assertThat(rec.getTags().get("production_usage")).isEqualTo("false");
+                        Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("server_performance");
+                        Assertions.assertThat(fluxRecord.getValues())
+                                .hasEntrySatisfying("location", value -> Assertions.assertThat(value).isEqualTo("Area 1° 10' \"20"))
+                                .hasEntrySatisfying("production_usage", value -> Assertions.assertThat(value).isEqualTo("false"));
                     }
 
                     return true;
@@ -263,7 +255,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
     }
 
     @Test
-    void parsingToFluxResultMultiRecordValues() {
+    void parsingToFluxRecordsMultiRecordValues() {
 
         String data = "#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,string,string,string,string,long,long,string\n"
                 + "#group,false,false,true,true,true,true,true,true,false,false,false\n"
@@ -281,23 +273,19 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .parserOptions(parserOptions)
                 .build();
 
-        Flowable<FluxResult> results = fluxClient.flux(Flux.from("flux_database"), queryOptions);
+        Flowable<FluxRecord> results = fluxClient.flux(Flux.from("flux_database"), queryOptions);
         results
                 .take(1)
                 .test()
                 .assertValueCount(1)
-                .assertValue(fluxResult -> {
+                .assertValue(fluxRecord -> {
 
-                    Assertions.assertThat(fluxResult.getTables().get(0).getRecords()).hasSize(1);
-
-                    Record record = fluxResult.getTables().get(0).getRecords().get(0);
-                    Assertions.assertThat(record.getTags()).hasSize(2);
-                    Assertions.assertThat(record.getTags())
+                    Assertions.assertThat(fluxRecord.getValues())
                             .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("A"))
                             .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
-                    Assertions.assertThat(record.getValues()).hasSize(3);
-                    Assertions.assertThat(record.getValue()).isEqualTo(11L);
-                    Assertions.assertThat(record.getValues())
+                    Assertions.assertThat(fluxRecord.getValues()).hasSize(11);
+                    Assertions.assertThat(fluxRecord.getValue()).isNull();
+                    Assertions.assertThat(fluxRecord.getValues())
                             .hasEntrySatisfying("value1", value -> Assertions.assertThat(value).isEqualTo(11L))
                             .hasEntrySatisfying("_value2", value -> Assertions.assertThat(value).isEqualTo(121L))
                             .hasEntrySatisfying("value_str", value -> Assertions.assertThat(value).isEqualTo("test"));

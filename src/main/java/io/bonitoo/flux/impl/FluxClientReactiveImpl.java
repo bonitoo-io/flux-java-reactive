@@ -38,7 +38,7 @@ import io.bonitoo.flux.FluxException;
 import io.bonitoo.flux.events.AbstractFluxEvent;
 import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
-import io.bonitoo.flux.mapper.FluxResult;
+import io.bonitoo.flux.mapper.FluxRecord;
 import io.bonitoo.flux.options.FluxConnectionOptions;
 import io.bonitoo.flux.options.FluxCsvParserOptions;
 import io.bonitoo.flux.options.FluxOptions;
@@ -81,7 +81,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final String query) {
+    public Flowable<FluxRecord> flux(@Nonnull final String query) {
 
         Preconditions.checkNonEmptyString(query, "Flux query");
 
@@ -90,7 +90,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final String query, @Nonnull final FluxOptions options) {
+    public Flowable<FluxRecord> flux(@Nonnull final String query, @Nonnull final FluxOptions options) {
 
         Preconditions.checkNonEmptyString(query, "Flux query");
         Objects.requireNonNull(options, "FluxOptions are required");
@@ -119,7 +119,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final Flux query) {
+    public Flowable<FluxRecord> flux(@Nonnull final Flux query) {
 
         Objects.requireNonNull(query, "Flux query is required");
 
@@ -128,7 +128,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final FluxOptions options) {
+    public Flowable<FluxRecord> flux(@Nonnull final Flux query, @Nonnull final FluxOptions options) {
 
         Objects.requireNonNull(query, "Flux query is required");
         Objects.requireNonNull(options, "FluxOptions are required");
@@ -138,7 +138,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final Map<String, Object> properties) {
+    public Flowable<FluxRecord> flux(@Nonnull final Flux query, @Nonnull final Map<String, Object> properties) {
 
         Objects.requireNonNull(query, "Flux query is required");
         Objects.requireNonNull(properties, "Parameters are required");
@@ -148,7 +148,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final Flux query,
+    public Flowable<FluxRecord> flux(@Nonnull final Flux query,
                                      @Nonnull final Map<String, Object> properties,
                                      @Nonnull final FluxOptions options) {
 
@@ -161,7 +161,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
+    public Flowable<FluxRecord> flux(@Nonnull final Publisher<Flux> queryStream,
                                      @Nonnull final Map<String, Object> properties) {
         Objects.requireNonNull(queryStream, "Flux stream is required");
         Objects.requireNonNull(properties, "Parameters are required");
@@ -171,7 +171,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
+    public Flowable<FluxRecord> flux(@Nonnull final Publisher<Flux> queryStream,
                                      @Nonnull final Map<String, Object> properties,
                                      @Nonnull final FluxOptions options) {
 
@@ -179,7 +179,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
         Objects.requireNonNull(properties, "Parameters are required");
         Objects.requireNonNull(options, "FluxOptions are required");
 
-        return Flowable.fromPublisher(queryStream).concatMap((Function<Flux, Publisher<FluxResult>>) flux -> {
+        return Flowable.fromPublisher(queryStream).concatMap((Function<Flux, Publisher<FluxRecord>>) flux -> {
 
             //
             // Parameters
@@ -357,7 +357,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
     }
 
     @Nonnull
-    private Observable<FluxResult> chunkReader(@Nonnull final String query,
+    private Observable<FluxRecord> chunkReader(@Nonnull final String query,
                                                @Nonnull final FluxConnectionOptions options,
                                                @Nonnull final ResponseBody body,
                                                @Nonnull final FluxCsvParserOptions parserOptions) {
@@ -378,13 +378,10 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                 //
                 while (!subscriber.isDisposed() && !source.exhausted()) {
 
-                    FluxResult fluxResult = mapper.toFluxResult(source, parserOptions);
-                    if (fluxResult != null) {
-
-                        subscriber.onNext(fluxResult);
-                        publishEvent(new FluxSuccessEvent(options, query));
-                    }
+                    mapper.toFluxRecords(source, parserOptions, subscriber::onNext);
                 }
+
+                publishEvent(new FluxSuccessEvent(options, query));
             } catch (IOException e) {
 
                 //

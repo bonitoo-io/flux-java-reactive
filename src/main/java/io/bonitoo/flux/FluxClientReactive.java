@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import io.bonitoo.flux.events.AbstractFluxEvent;
-import io.bonitoo.flux.mapper.FluxResult;
+import io.bonitoo.flux.mapper.FluxRecord;
 import io.bonitoo.flux.options.FluxOptions;
 
 import io.reactivex.Flowable;
@@ -51,22 +51,22 @@ public interface FluxClientReactive {
      * Execute a Flux against the Flux service.
      *
      * @param query the flux query to execute
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final String query);
+    Flowable<FluxRecord> flux(@Nonnull final String query);
 
     /**
      * Execute a Flux against the Flux service.
      *
      * @param query   the flux query to execute
      * @param options the options for the query
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final String query, @Nonnull final FluxOptions options);
+    Flowable<FluxRecord> flux(@Nonnull final String query, @Nonnull final FluxOptions options);
 
     /**
      * Execute a Flux against the Flux service.
@@ -91,33 +91,33 @@ public interface FluxClientReactive {
      * Execute a Flux against the Flux service.
      *
      * @param query the flux query to execute
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final Flux query);
+    Flowable<FluxRecord> flux(@Nonnull final Flux query);
 
     /**
      * Execute a Flux against the Flux service.
      *
      * @param query   the flux query to execute
      * @param options the options for the query
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final FluxOptions options);
+    Flowable<FluxRecord> flux(@Nonnull final Flux query, @Nonnull final FluxOptions options);
 
     /**
      * Execute a Flux against the Flux service.
      *
      * @param query      the flux query to execute
      * @param properties named properties
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final Flux query, @Nonnull final Map<String, Object> properties);
+    Flowable<FluxRecord> flux(@Nonnull final Flux query, @Nonnull final Map<String, Object> properties);
 
     /**
      * Execute a Flux against the Flux service.
@@ -125,25 +125,25 @@ public interface FluxClientReactive {
      * @param query      the flux query to execute
      * @param properties named properties
      * @param options    the options for the query
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final Flux query,
-                              @Nonnull final Map<String, Object> properties,
-                              @Nonnull final FluxOptions options);
+    Flowable<FluxRecord> flux(@Nonnull final Flux query,
+                             @Nonnull final Map<String, Object> properties,
+                             @Nonnull final FluxOptions options);
 
     /**
      * Execute a Flux against the Flux service.
      *
      * @param queryStream the flux query to execute
      * @param properties  named properties
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
-                              @Nonnull final Map<String, Object> properties);
+    Flowable<FluxRecord> flux(@Nonnull final Publisher<Flux> queryStream,
+                             @Nonnull final Map<String, Object> properties);
 
     /**
      * Execute a Flux against the Flux service.
@@ -151,13 +151,13 @@ public interface FluxClientReactive {
      * @param queryStream the flux query to execute
      * @param properties  named properties
      * @param options     the options for the query
-     * @return {@link Flowable} emitting a {@link FluxResult} which are matched the query or
+     * @return {@link Flowable} emitting {@link FluxRecord}s which are matched the query or
      * {@link Flowable#empty()} if none found.
      */
     @Nonnull
-    Flowable<FluxResult> flux(@Nonnull final Publisher<Flux> queryStream,
-                              @Nonnull final Map<String, Object> properties,
-                              @Nonnull final FluxOptions options);
+    Flowable<FluxRecord> flux(@Nonnull final Publisher<Flux> queryStream,
+                             @Nonnull final Map<String, Object> properties,
+                             @Nonnull final FluxOptions options);
 
     /**
      * Execute a Flux against the Flux service.

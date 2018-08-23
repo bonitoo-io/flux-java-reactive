@@ -24,13 +24,9 @@ package io.bonitoo.flux;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.bonitoo.flux.mapper.ColumnHeader;
-import io.bonitoo.flux.mapper.FluxResult;
-import io.bonitoo.flux.mapper.Record;
-import io.bonitoo.flux.mapper.Table;
+import io.bonitoo.flux.mapper.FluxRecord;
 import io.bonitoo.flux.operators.restriction.Restrictions;
 
 import io.reactivex.Flowable;
@@ -115,61 +111,43 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
                 .filter(restriction)
                 .sum();
 
-        Flowable<FluxResult> results = fluxClient.flux(flux);
+        Flowable<FluxRecord> results = fluxClient.flux(flux);
 
         results
                 .test()
-                .assertValueCount(1)
-                .assertValue(result -> {
+                .assertValueCount(2)
+                .assertValueAt(0, fluxRecord -> {
 
-                    Assertions.assertThat(result).isNotNull();
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
 
-                    List<Table> tables = result.getTables();
+                    Assertions.assertThat(fluxRecord.getStart()).isEqualTo(Instant.EPOCH);
+                    Assertions.assertThat(fluxRecord.getStop()).isNotNull();
+                    Assertions.assertThat(fluxRecord.getTime()).isEqualTo(Instant.ofEpochSecond(10));
 
-                    Assertions.assertThat(tables).hasSize(2);
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(21L);
 
-                    Table table1 = tables.get(0);
-                    // Data types
-                    Assertions.assertThat(table1.getColumnHeaders()).hasSize(11);
-                    Assertions.assertThat(table1.getColumnHeaders().stream().map(ColumnHeader::getDataType))
-                            .containsExactlyInAnyOrder("#datatype", "string", "long", "dateTime:RFC3339", "dateTime:RFC3339", "dateTime:RFC3339", "long", "string", "string", "string", "string");
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("A"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
 
-                    // Columns
-                    Assertions.assertThat(table1.getColumnHeaders().stream().map(ColumnHeader::getColumnName))
-                            .containsExactlyInAnyOrder("", "result", "table", "_start", "_stop", "_time", "_value", "_field", "_measurement", "host", "region");
-
-                    // Records
-                    Assertions.assertThat(table1.getRecords()).hasSize(1);
-
-                    // Record 1
-                    Record record1 = table1.getRecords().get(0);
-                    Assertions.assertThat(record1.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record1.getField()).isEqualTo("free");
-
-                    Assertions.assertThat(record1.getStart()).isEqualTo(Instant.EPOCH);
-                    Assertions.assertThat(record1.getStop()).isNotNull();
-                    Assertions.assertThat(record1.getTime()).isEqualTo(Instant.ofEpochSecond(10));
-
-                    Assertions.assertThat(record1.getValue()).isEqualTo(21L);
-
-                    Assertions.assertThat(record1.getTags()).hasSize(2);
-                    Assertions.assertThat(record1.getTags().get("host")).isEqualTo("A");
-                    Assertions.assertThat(record1.getTags().get("region")).isEqualTo("west");
+                    return true;
+                })
+                .assertValueAt(1, fluxRecord -> {
 
                     // Record 2
-                    Record record2 = tables.get(1).getRecords().get(0);
-                    Assertions.assertThat(record2.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record2.getField()).isEqualTo("free");
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
 
-                    Assertions.assertThat(record2.getStart()).isEqualTo(Instant.EPOCH);
-                    Assertions.assertThat(record2.getStop()).isNotNull();
-                    Assertions.assertThat(record2.getTime()).isEqualTo(Instant.ofEpochSecond(10));
+                    Assertions.assertThat(fluxRecord.getStart()).isEqualTo(Instant.EPOCH);
+                    Assertions.assertThat(fluxRecord.getStop()).isNotNull();
+                    Assertions.assertThat(fluxRecord.getTime()).isEqualTo(Instant.ofEpochSecond(10));
 
-                    Assertions.assertThat(record2.getValue()).isEqualTo(42L);
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(42L);
 
-                    Assertions.assertThat(record2.getTags()).hasSize(2);
-                    Assertions.assertThat(record2.getTags().get("host")).isEqualTo("B");
-                    Assertions.assertThat(record2.getTags().get("region")).isEqualTo("west");
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("B"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
 
                     return true;
                 });
@@ -202,66 +180,61 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
                 .filter(restriction)
                 .window(10L, ChronoUnit.SECONDS);
 
-        Flowable<FluxResult> results = fluxClient.flux(flux);
+        Flowable<FluxRecord> results = fluxClient.flux(flux);
 
         results
                 .test()
-                .assertValueCount(1)
-                .assertValue(result -> {
+                .assertValueCount(4)
+                .assertValueAt(0, fluxRecord -> {
 
-                    Assertions.assertThat(result).isNotNull();
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
 
-                    List<Table> tables = result.getTables();
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("A"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
 
-                    Assertions.assertThat(tables).hasSize(4);
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(10L);
 
-                    // Record1
-                    Record record1 = tables.get(0).getRecords().get(0);
-                    Assertions.assertThat(tables.get(0).getRecords()).hasSize(1);
-                    Assertions.assertThat(record1.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record1.getField()).isEqualTo("free");
+                    return true;
+                })
+                .assertValueAt(1, fluxRecord -> {
 
-                    Assertions.assertThat(record1.getTags()).hasSize(2);
-                    Assertions.assertThat(record1.getTags().get("host")).isEqualTo("A");
-                    Assertions.assertThat(record1.getTags().get("region")).isEqualTo("west");
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
 
-                    Assertions.assertThat(record1.getValue()).isEqualTo(10L);
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("B"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
 
-                    // Record2
-                    Record record2 = tables.get(1).getRecords().get(0);
-                    Assertions.assertThat(tables.get(1).getRecords()).hasSize(1);
-                    Assertions.assertThat(record2.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record2.getField()).isEqualTo("free");
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(20L);
 
-                    Assertions.assertThat(record2.getTags()).hasSize(2);
-                    Assertions.assertThat(record2.getTags().get("host")).isEqualTo("B");
-                    Assertions.assertThat(record2.getTags().get("region")).isEqualTo("west");
+                    return true;
+                })
+                .assertValueAt(2, fluxRecord -> {
 
-                    Assertions.assertThat(record2.getValue()).isEqualTo(20L);
 
-                    // Record3
-                    Record record3 = tables.get(2).getRecords().get(0);
-                    Assertions.assertThat(tables.get(2).getRecords()).hasSize(1);
-                    Assertions.assertThat(record3.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record3.getField()).isEqualTo("free");
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
 
-                    Assertions.assertThat(record3.getTags()).hasSize(2);
-                    Assertions.assertThat(record3.getTags().get("host")).isEqualTo("A");
-                    Assertions.assertThat(record3.getTags().get("region")).isEqualTo("west");
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("A"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
 
-                    Assertions.assertThat(record3.getValue()).isEqualTo(11L);
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(11L);
 
-                    // Record4
-                    Record record4 = tables.get(3).getRecords().get(0);
-                    Assertions.assertThat(tables.get(3).getRecords()).hasSize(1);
-                    Assertions.assertThat(record4.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record4.getField()).isEqualTo("free");
+                    return true;
+                })
+                .assertValueAt(3, fluxRecord -> {
 
-                    Assertions.assertThat(record4.getTags()).hasSize(2);
-                    Assertions.assertThat(record4.getTags().get("host")).isEqualTo("B");
-                    Assertions.assertThat(record4.getTags().get("region")).isEqualTo("west");
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
 
-                    Assertions.assertThat(record4.getValue()).isEqualTo(22L);
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("B"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
+
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(22L);
 
                     return true;
                 });
@@ -295,66 +268,67 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
                 .window(10L, ChronoUnit.SECONDS)
                 .groupBy("region");
 
-        Flowable<FluxResult> results = fluxClient.flux(flux);
+        Flowable<FluxRecord> results = fluxClient.flux(flux);
 
         results
                 .test()
-                .assertValueCount(1)
-                .assertValue(result -> {
-
-                    Assertions.assertThat(result).isNotNull();
-
-                    List<Table> tables = result.getTables();
-
-                    Assertions.assertThat(tables).hasSize(1);
-                    Assertions.assertThat(tables.get(0).getRecords()).hasSize(4);
+                .assertValueCount(4)
+                .assertValueAt(0, fluxRecord -> {
 
                     // Record1
-                    Record record1 = tables.get(0).getRecords().get(0);
-                    Assertions.assertThat(record1.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record1.getField()).isEqualTo("free");
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
 
-                    Assertions.assertThat(record1.getTags()).hasSize(2);
-                    Assertions.assertThat(record1.getTags().get("host")).isEqualTo("A");
-                    Assertions.assertThat(record1.getTags().get("region")).isEqualTo("west");
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("A"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
 
-                    Assertions.assertThat(record1.getValue()).isEqualTo(10L);
-
-                    // Record2
-                    Record record2 = tables.get(0).getRecords().get(1);
-                    Assertions.assertThat(record2.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record2.getField()).isEqualTo("free");
-
-                    Assertions.assertThat(record2.getTags()).hasSize(2);
-                    Assertions.assertThat(record2.getTags().get("host")).isEqualTo("B");
-                    Assertions.assertThat(record2.getTags().get("region")).isEqualTo("west");
-
-                    Assertions.assertThat(record2.getValue()).isEqualTo(20L);
-
-                    // Record3
-                    Record record3 = tables.get(0).getRecords().get(2);
-                    Assertions.assertThat(record3.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record3.getField()).isEqualTo("free");
-
-                    Assertions.assertThat(record3.getTags()).hasSize(2);
-                    Assertions.assertThat(record3.getTags().get("host")).isEqualTo("A");
-                    Assertions.assertThat(record3.getTags().get("region")).isEqualTo("west");
-
-                    Assertions.assertThat(record3.getValue()).isEqualTo(11L);
-
-                    // Record4
-                    Record record4 = tables.get(0).getRecords().get(3);
-                    Assertions.assertThat(record4.getMeasurement()).isEqualTo("mem");
-                    Assertions.assertThat(record4.getField()).isEqualTo("free");
-
-                    Assertions.assertThat(record4.getTags()).hasSize(2);
-                    Assertions.assertThat(record4.getTags().get("host")).isEqualTo("B");
-                    Assertions.assertThat(record4.getTags().get("region")).isEqualTo("west");
-
-                    Assertions.assertThat(record4.getValue()).isEqualTo(22L);
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(10L);
 
                     return true;
-                });
+                })
+                .assertValueAt(1, fluxRecord -> {
+
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
+
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("B"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
+
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(20L);
+
+                    return true;
+                })
+                .assertValueAt(2, fluxRecord -> {
+
+                    // Record3
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
+
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("A"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
+
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(11L);
+
+                    return true;
+                })
+                .assertValueAt(3, fluxRecord -> {
+
+                    // Record4
+                    Assertions.assertThat(fluxRecord.getMeasurement()).isEqualTo("mem");
+                    Assertions.assertThat(fluxRecord.getField()).isEqualTo("free");
+
+                    Assertions.assertThat(fluxRecord.getValues())
+                            .hasEntrySatisfying("host", value -> Assertions.assertThat(value).isEqualTo("B"))
+                            .hasEntrySatisfying("region", value -> Assertions.assertThat(value).isEqualTo("west"));
+
+                    Assertions.assertThat(fluxRecord.getValue()).isEqualTo(22L);
+
+                    return true;
+                })
+        ;
     }
 
     @Test
@@ -369,7 +343,7 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
 
     @Measurement(name = "mem")
     public static class Memory {
-        
+
         @Column(name = "time")
         private Instant time;
 
