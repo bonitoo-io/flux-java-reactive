@@ -31,7 +31,6 @@ import javax.annotation.Nullable;
 import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
 import io.bonitoo.flux.mapper.FluxRecord;
-import io.bonitoo.flux.options.FluxCsvParserOptions;
 import io.bonitoo.flux.options.FluxOptions;
 import io.bonitoo.flux.options.query.TaskOption;
 
@@ -265,12 +264,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
 
         fluxServer.enqueue(createResponse(data));
 
-        FluxCsvParserOptions parserOptions = FluxCsvParserOptions.builder()
-                .valueDestinations("value1", "_value2", "value_str")
-                .build();
-
         FluxOptions queryOptions = FluxOptions.builder()
-                .parserOptions(parserOptions)
                 .build();
 
         Flowable<FluxRecord> results = fluxClient.flux(Flux.from("flux_database"), queryOptions);

@@ -40,7 +40,6 @@ import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
 import io.bonitoo.flux.mapper.FluxRecord;
 import io.bonitoo.flux.options.FluxConnectionOptions;
-import io.bonitoo.flux.options.FluxCsvParserOptions;
 import io.bonitoo.flux.options.FluxOptions;
 import io.bonitoo.flux.utils.Preconditions;
 
@@ -191,7 +190,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                     .query(orgID, createBody(query, options))
                     .flatMap(
                             // success response
-                            body -> chunkReader(query, this.fluxConnectionOptions, body, options.getParserOptions()),
+                            body -> chunkReader(query, this.fluxConnectionOptions, body),
                             // error response
                             throwable -> (observer -> {
 
@@ -359,13 +358,11 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
     @Nonnull
     private Observable<FluxRecord> chunkReader(@Nonnull final String query,
                                                @Nonnull final FluxConnectionOptions options,
-                                               @Nonnull final ResponseBody body,
-                                               @Nonnull final FluxCsvParserOptions parserOptions) {
+                                               @Nonnull final ResponseBody body) {
 
         Objects.requireNonNull(options, "FluxConnectionOptions are required");
         Preconditions.checkNonEmptyString(query, "Flux query");
         Objects.requireNonNull(body, "ResponseBody is required");
-        Objects.requireNonNull(parserOptions, "FluxCsvParserOptions are required");
 
         return Observable.create(subscriber -> {
 
@@ -378,7 +375,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                 //
                 while (!subscriber.isDisposed() && !source.exhausted()) {
 
-                    mapper.toFluxRecords(source, parserOptions, subscriber::onNext);
+                    mapper.toFluxRecords(source, subscriber::onNext);
                 }
 
                 publishEvent(new FluxSuccessEvent(options, query));
