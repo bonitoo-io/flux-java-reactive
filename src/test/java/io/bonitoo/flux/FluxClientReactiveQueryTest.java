@@ -195,6 +195,22 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
     }
 
     @Test
+    void queryErrorSuccessResponse() {
+
+        String error = "error,reference\n" + "Failed to parse query,897";
+
+        fluxServer.enqueue(createResponse(error));
+
+        Flowable<FluxRecord> results = fluxClient.flux(Flux.from("flux_database"));
+        results
+                .take(1)
+                .test()
+                .assertError(FluxException.class)
+                .assertErrorMessage("Failed to parse query [reference: 897]");
+
+    }
+
+    @Test
     void parsingToFluxRecords() {
 
         fluxServer.enqueue(createResponse());
