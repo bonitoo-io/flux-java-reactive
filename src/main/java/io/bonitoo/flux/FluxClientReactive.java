@@ -25,8 +25,8 @@ package io.bonitoo.flux;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
+import io.bonitoo.flux.dto.FluxRecord;
 import io.bonitoo.flux.events.AbstractFluxEvent;
-import io.bonitoo.flux.mapper.FluxRecord;
 import io.bonitoo.flux.options.FluxOptions;
 
 import io.reactivex.Flowable;

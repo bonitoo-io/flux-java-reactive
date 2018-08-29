@@ -28,9 +28,9 @@ import java.util.HashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.bonitoo.flux.dto.FluxRecord;
 import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
-import io.bonitoo.flux.mapper.FluxRecord;
 import io.bonitoo.flux.options.FluxOptions;
 import io.bonitoo.flux.options.query.TaskOption;
 

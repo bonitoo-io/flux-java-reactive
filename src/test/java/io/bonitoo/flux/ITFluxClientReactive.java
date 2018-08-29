@@ -26,7 +26,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-import io.bonitoo.flux.mapper.FluxRecord;
+import io.bonitoo.flux.dto.FluxRecord;
 import io.bonitoo.flux.operators.restriction.Restrictions;
 
 import io.reactivex.Flowable;
