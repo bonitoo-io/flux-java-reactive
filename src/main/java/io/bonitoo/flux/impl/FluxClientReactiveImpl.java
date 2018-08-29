@@ -375,7 +375,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                 //
                 while (!subscriber.isDisposed() && !source.exhausted()) {
 
-                    mapper.toFluxRecords(source, subscriber::onNext);
+                    mapper.toFluxRecords(source, subscriber::onNext, () -> !subscriber.isDisposed());
                 }
 
                 publishEvent(new FluxSuccessEvent(options, query));
