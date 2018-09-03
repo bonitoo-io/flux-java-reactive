@@ -52,6 +52,7 @@ if [ ! "$RUN_NIGHTLY_BINARY" == "true" ]; then
     #
     docker network create influxdb
     INFLUXDB_IP=influxdb
+    PLATFORM_IP=influxd
     FLUX_IP=flux
     DOCKER_NET=influxdb
 
@@ -79,22 +80,22 @@ if [ ! "$RUN_NIGHTLY_BINARY" == "true" ]; then
     docker run --detach --net=influxdb --name flux --publish 8093:8093 quay.io/influxdb/flux:${FLUX_VERSION}
 fi
 
+case "$OSTYPE" in
+  darwin*)
+    archive='darwin_amd64';
+    conf='influxdb_mac';
+     ;;
+  linux*)
+    archive="linux_amd64";
+    conf='influxdb_travis';
+esac
+
 if [ "$RUN_NIGHTLY_BINARY" == "true" ]; then
 
     echo "Run tests on InfluxDB nightly binary with Flux nightly binary"
 
     rm -rf ./influxdb-*
-    rm -rf ./fluxd_nightly_*
-
-    case "$OSTYPE" in
-      darwin*)
-        archive='darwin_amd64';
-        conf='influxdb_mac';
-         ;;
-      linux*)
-        archive="linux_amd64";
-        conf='influxdb_travis';
-    esac
+    rm -rf ./fluxd_nightly*
 
     wget https://dl.influxdata.com/influxdb/nightlies/influxdb-nightly_${archive}.tar.gz -O influxdb-nightly.tar.gz
     tar zxvf influxdb-nightly.tar.gz
@@ -122,11 +123,24 @@ if [ "$RUN_NIGHTLY_BINARY" == "true" ]; then
     ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'
     INFLUXDB_IP=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | grep 10`
     FLUX_IP=${INFLUXDB_IP}
+    PLATFORM_IP=${INFLUXDB_IP}
     DOCKER_NET=host
-    ps ux
 fi
 
-echo "INFLUXDB_IP: " ${INFLUXDB_IP} " FLUX_IP: " ${FLUX_IP}
+#
+# Fluxd
+#
+rm -rf ./platform-nightly*
+wget http://167.114.231.105/nightlies/influxd_nightly_${archive}.tar.gz -O platform-nightly.tar.gz
+mkdir platform-nightly/ || true
+tar zxvf platform-nightly.tar.gz -C platform-nightly/
+./platform-nightly/influxd  &>./platform-nightly.log &
+
+# Wait for start Influxd
+echo "Wait 5s to start Influxd"
+sleep 5
+
+echo "INFLUXDB_IP: " ${INFLUXDB_IP} " FLUX_IP: " ${FLUX_IP} " PLATFORM_IP: " ${PLATFORM_IP}
 
 docker run -it --rm \
        --volume ${PWD}:/usr/src/mymaven \
@@ -136,6 +150,7 @@ docker run -it --rm \
        --env INFLUXDB_VERSION=${INFLUXDB_VERSION} \
        --env INFLUXDB_IP=${INFLUXDB_IP} \
        --env FLUX_IP=${FLUX_IP} \
+       --env PLATFORM_IP=${PLATFORM_IP} \
        maven:${MAVEN_JAVA_VERSION} mvn clean install -U
 
 docker kill influxdb || true

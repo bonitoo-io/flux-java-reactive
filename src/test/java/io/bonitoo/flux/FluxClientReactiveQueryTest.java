@@ -67,7 +67,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
 
         listener.assertValueCount(1).assertValue(event -> {
 
-            Assertions.assertThat(event.getFluxQuery()).isEqualTo("from(db:\"flux_database\")");
+            Assertions.assertThat(event.getFluxQuery()).isEqualTo("from(bucket:\"flux_database\")");
             Assertions.assertThat(event.getOptions()).isNotNull();
 
             return true;
@@ -101,7 +101,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
         listener.assertValueCount(1).assertValue(event -> {
 
             String expected = "option task = {name: \"foo\", every: 1h, delay: 10m, cron: \"0 2 * * *\", retry: 5} "
-                    + "from(db:\"flux_database\")";
+                    + "from(bucket:\"flux_database\")";
 
             Assertions.assertThat(event.getFluxQuery()).isEqualToIgnoringWhitespace(expected);
             Assertions.assertThat(event.getOptions()).isNotNull();
@@ -125,7 +125,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .assertValueCount(6);
 
         Assertions.assertThat(queryFromRequest())
-                .isEqualToIgnoringWhitespace("from(db:\"flux_database\") |> limit(n: 5)");
+                .isEqualToIgnoringWhitespace("from(bucket:\"flux_database\") |> limit(n: 5)");
     }
 
     @Test
@@ -144,7 +144,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .assertValueCount(6);
 
         Assertions.assertThat(queryFromRequest())
-                .isEqualToIgnoringWhitespace("from(db:\"flux_database\") |> limit(n: 5)");
+                .isEqualToIgnoringWhitespace("from(bucket:\"flux_database\") |> limit(n: 5)");
     }
 
     @Test
@@ -152,7 +152,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
 
         fluxServer.enqueue(createResponse());
 
-        String query = "from(db:\"telegraf\") |> " +
+        String query = "from(bucket:\"telegraf\") |> " +
                 "filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
 
         Flowable<FluxRecord> results = fluxClient.flux(query);
@@ -185,7 +185,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .assertValueCount(1)
                 .assertValue(event -> {
 
-                    Assertions.assertThat(event.getFluxQuery()).isEqualTo("from(db:\"flux_database\")");
+                    Assertions.assertThat(event.getFluxQuery()).isEqualTo("from(bucket:\"flux_database\")");
                     Assertions.assertThat(event.getOptions()).isNotNull();
                     Assertions.assertThat(event.getException()).isInstanceOf(FluxException.class);
                     Assertions.assertThat(event.getException()).hasMessage(influxDBError);

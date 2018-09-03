@@ -99,7 +99,7 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
         //
         // CURL
         //
-        // curl -i -XPOST --data-urlencode 'q=from(db: "flux_database") |> range(start:0) |>
+        // curl -i -XPOST --data-urlencode 'q=from(bucket: "flux_database") |> range(start:0) |>
         // filter(fn:(r) => r._measurement == "mem" and r._field == "free") |> sum()'
         // --data-urlencode "orgName=0" http://localhost:8093/v1/query
 
@@ -159,7 +159,7 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
         //
         // CURL
         //
-        // curl -i -XPOST --data-urlencode 'q=from(db: "flux_database") |> range(start:0) |>
+        // curl -i -XPOST --data-urlencode 'q=from(bucket: "flux_database") |> range(start:0) |>
         // filter(fn:(r) => r._measurement == "mem" and r._field == "free") |> window(every:10s)'
         //  --data-urlencode "orgName=0" http://localhost:8093/v1/query
 
@@ -246,7 +246,7 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
         //
         // CURL
         //
-        // curl -i -XPOST --data-urlencode 'q=from(db: "flux_database") |> range(start:0)
+        // curl -i -XPOST --data-urlencode 'q=from(bucket: "flux_database") |> range(start:0)
         // |> filter(fn:(r) => r._measurement == "mem" and r._field == "free") |> window(every:10s)
         // |> group(by:["region"])' --data-urlencode "orgName=0" http://localhost:8093/v1/query
 

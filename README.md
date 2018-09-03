@@ -27,7 +27,7 @@ There are two possibilities how to create Flux query:
 #### Flux query
 
 ```java
-String query = "from(db:\"telegraf\") |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
+String query = "from(bucket:\"telegraf\") |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
 
 Flowable<FluxTable> tables = fluxClient.flux(query);
 ```

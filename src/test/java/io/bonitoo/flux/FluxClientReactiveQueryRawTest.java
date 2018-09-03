@@ -95,7 +95,7 @@ class FluxClientReactiveQueryRawTest extends AbstractFluxClientReactiveTest {
 
         fluxServer.enqueue(createResponse());
 
-        String query = "from(db:\"telegraf\") |> " +
+        String query = "from(bucket:\"telegraf\") |> " +
                 "filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
 
         Maybe<Response<ResponseBody>> result = fluxClient.fluxRaw(query);
