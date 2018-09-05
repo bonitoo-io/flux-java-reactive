@@ -1,6 +1,9 @@
 # flux-java-reactive
 
-[![Build Status](https://img.shields.io/circleci/project/github/bonitoo-io/flux-java-reactive/master.svg)](https://circleci.com/gh/bonitoo-io/flux-java-reactive/tree/master)
+> This library is under development and no stable version has been released yet.  
+> The API can change at any moment.
+
+[![Build Status](https://travis-ci.org/bonitoo-io/flux-java-reactive.svg?branch=master)](https://travis-ci.org/bonitoo-io/flux-java-reactive)
 [![codecov](https://codecov.io/gh/bonitoo-io/flux-java-reactive/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/flux-java-reactive)
 [![License](https://img.shields.io/github/license/bonitoo-io/flux-java-reactive.svg)](https://github.com/bonitoo-io/flux-java-reactive/blob/master/LICENSE)
 [![Snapshot Version](https://img.shields.io/nexus/s/https/apitea.com/nexus/io.bonitoo.flux/flux-java-reactive.svg)](https://apitea.com/nexus/content/repositories/bonitoo-snapshot/)
@@ -24,9 +27,9 @@ There are two possibilities how to create Flux query:
 #### Flux query
 
 ```java
-String query = "from(db:\"telegraf\") |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
+String query = "from(bucket:\"telegraf\") |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\" AND r[\"_field\"] == \"usage_user\") |> sum()";
 
-Flowable<FluxResult> results = fluxClient.flux(query);
+Flowable<FluxTable> tables = fluxClient.flux(query);
 ```
 
 #### Build-in operators
@@ -39,13 +42,13 @@ Flux query = Flux
     .groupBy("_measurement")
     .difference();
 
-Flowable<FluxResult> results = fluxClient.flux(query);
+Flowable<FluxTable> tables = fluxClient.flux(query);
 ```
 
 #### Handling server response
 
 There are two possibilities how to handle server response:
-1. Mapping to the `FluxResult` POJO ([mentioned above](#flux-query))
+1. Mapping to the `FluxTable` POJO ([mentioned above](#flux-query))
 2. Use directly server response to the custom handling
 
 ##### Custom Handling  
@@ -87,6 +90,9 @@ fluxClient.listenEvents(FluxErrorEvent.class).subscribe(event -> {
 ### Advanced Usage
 
 #### Gzip's support 
+
+> Currently unsupported by `flux` server.
+
 flux-java client doesn't enable gzip compress for http request body by default. If you want to enable gzip to reduce transfer data's size , you can call:
 
 ```java

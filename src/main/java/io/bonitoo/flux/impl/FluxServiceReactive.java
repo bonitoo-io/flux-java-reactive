@@ -26,30 +26,35 @@ import javax.annotation.Nonnull;
 
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 
 /**
  * @author Jakub Bednar (bednar@github) (26/06/2018 12:33)
- * @since 3.0.0
+ * @since 1.0.0
  */
-public interface FluxServiceReactive {
+interface FluxServiceReactive {
 
-    @Streaming
-    @POST("/v1/query")
     @Nonnull
-    Observable<ResponseBody> query(@Query(value = "q", encoded = true) String query,
-                                   @Query(value = "orgID", encoded = true) String orgID);
+    @Streaming
+    @POST("/query")
+    @Headers("Content-Type: application/json")
+    Observable<ResponseBody> query(@Query(value = "organization", encoded = true) String orgID,
+                                   @Nonnull @Body RequestBody batchPoints);
 
-    @Streaming
-    @POST("/v1/query")
     @Nonnull
-    Observable<Response<ResponseBody>> queryRaw(@Query(value = "q", encoded = true) String query,
-                                                @Query(value = "orgID", encoded = true) String orgID);
+    @Streaming
+    @POST("/query")
+    @Headers("Content-Type: application/json")
+    Observable<Response<ResponseBody>> queryRaw(@Query(value = "organization", encoded = true) String orgID,
+                                                @Nonnull @Body RequestBody batchPoints);
 
     @GET("/ping")
     Maybe<Response<ResponseBody>> ping();

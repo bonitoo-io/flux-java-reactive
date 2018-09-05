@@ -218,7 +218,7 @@
 					</mapping>
 					<useDefaultExcludes>false</useDefaultExcludes>
 					<includes>**, **/META-INF/services/**</includes>
-					<excludes>**/target/**, **/*.jar, **/.git/**, **/.*, **/*.png, *.iml, .idea/**, LICENSE, **/*.md
+					<excludes>**/target/**, **/*.jar, **/.git/**, **/.*, **/*.png, *.iml, *.bolt, .idea/**, **/*nightly*/**, **/.m2/**, LICENSE, **/*.md, **/PLACEHOLDER
 					</excludes>
 				</configuration>
 				<executions>
@@ -242,7 +242,8 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven-surefire.version}</version>
 				<configuration>
-					<argLine>-DFLUX_DISABLE=true</argLine>
+                    <!--suppress MavenModelInspection -->
+                    <argLine>-DFLUX_DISABLE=true ${argLine}</argLine>
 				</configuration>
 				<executions>
 					<execution>
@@ -262,6 +263,7 @@
 					<execution>
 						<goals>
 							<goal>prepare-agent</goal>
+							<goal>prepare-agent-integration</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -269,6 +271,13 @@
 						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report-integration</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>report-integration</goal>
 						</goals>
 					</execution>
 				</executions>
