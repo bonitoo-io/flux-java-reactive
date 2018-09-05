@@ -142,7 +142,9 @@ sleep 5
 
 echo "INFLUXDB_IP: " ${INFLUXDB_IP} " FLUX_IP: " ${FLUX_IP} " PLATFORM_IP: " ${PLATFORM_IP}
 
-docker run -it --rm \
+test -t 1 && USE_TTY="-t"
+
+docker run -i ${USE_TTY} --rm \
        --volume ${PWD}:/usr/src/mymaven \
        --volume ${PWD}/.m2:/root/.m2 \
        --workdir /usr/src/mymaven \
