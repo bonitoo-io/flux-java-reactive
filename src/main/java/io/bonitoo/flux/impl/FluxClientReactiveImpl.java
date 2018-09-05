@@ -32,16 +32,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 
+import io.bonitoo.InfluxException;
+import io.bonitoo.Preconditions;
 import io.bonitoo.flux.Flux;
 import io.bonitoo.flux.FluxClientReactive;
-import io.bonitoo.flux.FluxException;
 import io.bonitoo.flux.dto.FluxRecord;
 import io.bonitoo.flux.events.AbstractFluxEvent;
 import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
 import io.bonitoo.flux.options.FluxConnectionOptions;
 import io.bonitoo.flux.options.FluxOptions;
-import io.bonitoo.flux.utils.Preconditions;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -194,7 +194,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
                             // error response
                             throwable -> (observer -> {
 
-                                FluxException fluxException = FluxException.fromCause(throwable);
+                                InfluxException fluxException = InfluxException.fromCause(throwable);
 
                                 // publish event
                                 publishEvent(new FluxErrorEvent(fluxConnectionOptions, query, fluxException));

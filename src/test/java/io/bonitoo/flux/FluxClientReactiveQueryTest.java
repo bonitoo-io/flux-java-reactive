@@ -28,6 +28,7 @@ import java.util.HashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.bonitoo.InfluxException;
 import io.bonitoo.flux.dto.FluxRecord;
 import io.bonitoo.flux.events.FluxErrorEvent;
 import io.bonitoo.flux.events.FluxSuccessEvent;
@@ -178,7 +179,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
         results
                 .take(1)
                 .test()
-                .assertError(FluxException.class)
+                .assertError(InfluxException.class)
                 .assertErrorMessage(influxDBError);
 
         listener
@@ -187,7 +188,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
 
                     Assertions.assertThat(event.getFluxQuery()).isEqualTo("from(bucket:\"flux_database\")");
                     Assertions.assertThat(event.getOptions()).isNotNull();
-                    Assertions.assertThat(event.getException()).isInstanceOf(FluxException.class);
+                    Assertions.assertThat(event.getException()).isInstanceOf(InfluxException.class);
                     Assertions.assertThat(event.getException()).hasMessage(influxDBError);
 
                     return true;
@@ -205,7 +206,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
         results
                 .take(1)
                 .test()
-                .assertError(FluxException.class)
+                .assertError(InfluxException.class)
                 .assertErrorMessage("Failed to parse query [reference: 897]");
 
     }
