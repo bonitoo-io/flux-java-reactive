@@ -133,6 +133,7 @@ fi
 rm -rf ./platform-nightly*
 wget http://167.114.231.105/nightlies/influxd_nightly_${archive}.tar.gz -O platform-nightly.tar.gz
 mkdir platform-nightly/ || true
+rm ./influxd.bolt || true
 tar zxvf platform-nightly.tar.gz -C platform-nightly/
 ./platform-nightly/influxd  &>./platform-nightly.log &
 
