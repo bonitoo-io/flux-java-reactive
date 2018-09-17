@@ -12,7 +12,7 @@ services:
 # and we also test the most recent InfluxDB version with LTS JDK.
 env:
   - MAVEN_JAVA_VERSION=3-jdk-10-slim INFLUXDB_VERSION=1.6 RUN_NIGHTLY_BINARY=true
-  - MAVEN_JAVA_VERSION=3-jdk-8-slim INFLUXDB_VERSION=1.6 RUN_NIGHTLY_BINARY=true
+  - MAVEN_JAVA_VERSION=3-jdk-8-slim INFLUXDB_VERSION=1.6 RUN_NIGHTLY_BINARY=true CODE_COV=true
 
 script: ./compile-and-test.sh
 
@@ -23,9 +23,10 @@ jobs:
     env: MAVEN_JAVA_VERSION=3-jdk-8-slim INFLUXDB_VERSION=1.6 RUN_NIGHTLY_BINARY=true
 
 after_success:
-  - test $TRAVIS_BUILD_STAGE_NAME = "Test" && test $MAVEN_JAVA_VERSION = "3-jdk-8-slim" && bash <(curl -s https://codecov.io/bash)
+  - test "true" = ${CODE_COV:=false} && bash <(curl -s https://codecov.io/bash)
 
 after_failure:
   - cat target/surefire-reports/*.txt
   - cat influxdb-nightly.log
+  - cat influxd-nightly.log
   - cat fluxd_nightly.log
