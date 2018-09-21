@@ -123,7 +123,7 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
 
                     Assertions.assertThat(fluxRecord.getStart()).isEqualTo(Instant.EPOCH);
                     Assertions.assertThat(fluxRecord.getStop()).isNotNull();
-                    Assertions.assertThat(fluxRecord.getTime()).isEqualTo(Instant.ofEpochSecond(10));
+                    Assertions.assertThat(fluxRecord.getTime()).isNull();
 
                     Assertions.assertThat(fluxRecord.getValue()).isEqualTo(21L);
 
@@ -141,7 +141,7 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
 
                     Assertions.assertThat(fluxRecord.getStart()).isEqualTo(Instant.EPOCH);
                     Assertions.assertThat(fluxRecord.getStop()).isNotNull();
-                    Assertions.assertThat(fluxRecord.getTime()).isEqualTo(Instant.ofEpochSecond(10));
+                    Assertions.assertThat(fluxRecord.getTime()).isNull();
 
                     Assertions.assertThat(fluxRecord.getValue()).isEqualTo(42L);
 

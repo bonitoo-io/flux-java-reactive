@@ -198,7 +198,12 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
     @Test
     void queryErrorSuccessResponse() {
 
-        String error = "error,reference\n" + "Failed to parse query,897";
+        String error =
+                "#datatype,string,string\n"
+                        + "#group,true,true\n"
+                        + "#default,,\n"
+                        + ",error,reference\n"
+                        + ",failed to create physical plan: invalid time bounds from procedure from: bounds contain zero time,897";
 
         fluxServer.enqueue(createResponse(error));
 
@@ -207,7 +212,7 @@ class FluxClientReactiveQueryTest extends AbstractFluxClientReactiveTest {
                 .take(1)
                 .test()
                 .assertError(InfluxException.class)
-                .assertErrorMessage("Failed to parse query [reference: 897]");
+                .assertErrorMessage("failed to create physical plan: invalid time bounds from procedure from: bounds contain zero time [reference: 897]");
 
     }
 
