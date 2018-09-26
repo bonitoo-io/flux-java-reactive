@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 
-import io.bonitoo.flux.options.FluxConnectionOptions;
+import io.bonitoo.flux.option.FluxConnectionOptions;
 
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;

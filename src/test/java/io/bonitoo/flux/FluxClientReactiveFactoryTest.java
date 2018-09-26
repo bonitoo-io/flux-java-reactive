@@ -22,7 +22,7 @@
  */
 package io.bonitoo.flux;
 
-import io.bonitoo.flux.options.FluxConnectionOptions;
+import io.bonitoo.flux.option.FluxConnectionOptions;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -27,7 +27,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 import io.bonitoo.flux.dto.FluxRecord;
-import io.bonitoo.flux.operators.restriction.Restrictions;
+import io.bonitoo.flux.operator.restriction.Restrictions;
 
 import io.reactivex.Flowable;
 import org.assertj.core.api.Assertions;

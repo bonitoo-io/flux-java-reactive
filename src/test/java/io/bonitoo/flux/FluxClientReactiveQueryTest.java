@@ -28,12 +28,12 @@ import java.util.HashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.bonitoo.InfluxException;
+import io.bonitoo.core.InfluxException;
 import io.bonitoo.flux.dto.FluxRecord;
-import io.bonitoo.flux.events.FluxErrorEvent;
-import io.bonitoo.flux.events.FluxSuccessEvent;
-import io.bonitoo.flux.options.FluxOptions;
-import io.bonitoo.flux.options.query.TaskOption;
+import io.bonitoo.flux.event.FluxErrorEvent;
+import io.bonitoo.flux.event.FluxSuccessEvent;
+import io.bonitoo.flux.option.FluxOptions;
+import io.bonitoo.flux.option.query.TaskOption;
 
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;

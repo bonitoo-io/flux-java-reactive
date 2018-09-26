@@ -25,9 +25,9 @@ package io.bonitoo.flux;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
+import io.bonitoo.core.event.AbstractInfluxEvent;
 import io.bonitoo.flux.dto.FluxRecord;
-import io.bonitoo.flux.events.AbstractFluxEvent;
-import io.bonitoo.flux.options.FluxOptions;
+import io.bonitoo.flux.option.FluxOptions;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
@@ -233,7 +233,7 @@ public interface FluxClientReactive {
      * @return lister for {@code eventType} events
      */
     @Nonnull
-    <T extends AbstractFluxEvent> Observable<T> listenEvents(@Nonnull Class<T> eventType);
+    <T extends AbstractInfluxEvent> Observable<T> listenEvents(@Nonnull Class<T> eventType);
 
     /**
      * Enable Gzip compress for http request body.

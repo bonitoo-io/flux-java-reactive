@@ -32,16 +32,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 
-import io.bonitoo.InfluxException;
-import io.bonitoo.Preconditions;
+import io.bonitoo.core.InfluxException;
+import io.bonitoo.core.Preconditions;
+import io.bonitoo.core.event.AbstractInfluxEvent;
 import io.bonitoo.flux.Flux;
 import io.bonitoo.flux.FluxClientReactive;
 import io.bonitoo.flux.dto.FluxRecord;
-import io.bonitoo.flux.events.AbstractFluxEvent;
-import io.bonitoo.flux.events.FluxErrorEvent;
-import io.bonitoo.flux.events.FluxSuccessEvent;
-import io.bonitoo.flux.options.FluxConnectionOptions;
-import io.bonitoo.flux.options.FluxOptions;
+import io.bonitoo.flux.event.FluxErrorEvent;
+import io.bonitoo.flux.event.FluxSuccessEvent;
+import io.bonitoo.flux.option.FluxConnectionOptions;
+import io.bonitoo.flux.option.FluxOptions;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -287,7 +287,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
 
     @Nonnull
     @Override
-    public <T extends AbstractFluxEvent> Observable<T> listenEvents(@Nonnull final Class<T> eventType) {
+    public <T extends AbstractInfluxEvent> Observable<T> listenEvents(@Nonnull final Class<T> eventType) {
 
         Objects.requireNonNull(eventType, "EventType is required");
 
@@ -401,7 +401,7 @@ public class FluxClientReactiveImpl extends AbstractFluxClient<FluxServiceReacti
         });
     }
 
-    private <T extends AbstractFluxEvent> void publishEvent(@Nonnull final T event) {
+    private <T extends AbstractInfluxEvent> void publishEvent(@Nonnull final T event) {
 
         Objects.requireNonNull(event, "Event is required");
 
