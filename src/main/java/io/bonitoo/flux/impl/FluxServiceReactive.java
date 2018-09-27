@@ -44,14 +44,14 @@ interface FluxServiceReactive {
 
     @Nonnull
     @Streaming
-    @POST("/query")
+    @POST("/v2/query")
     @Headers("Content-Type: application/json")
     Observable<ResponseBody> query(@Query(value = "organization", encoded = true) String orgID,
                                    @Nonnull @Body RequestBody batchPoints);
 
     @Nonnull
     @Streaming
-    @POST("/query")
+    @POST("/v2/query")
     @Headers("Content-Type: application/json")
     Observable<Response<ResponseBody>> queryRaw(@Query(value = "organization", encoded = true) String orgID,
                                                 @Nonnull @Body RequestBody batchPoints);

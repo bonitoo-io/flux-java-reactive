@@ -52,7 +52,7 @@ public abstract class AbstractITFluxClientReactive {
     protected void setUp() {
 
         String fluxIP = System.getenv().getOrDefault("FLUX_IP", "127.0.0.1");
-        String fluxPort = System.getenv().getOrDefault("FLUX_PORT_API", "8093");
+        String fluxPort = System.getenv().getOrDefault("FLUX_PORT_API", "8086");
         String fluxURL = "http://" + fluxIP + ":" + fluxPort;
         LOG.log(Level.FINEST, "Flux URL: {0}", fluxURL);
 

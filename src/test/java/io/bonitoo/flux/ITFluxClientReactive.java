@@ -36,7 +36,6 @@ import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -332,7 +331,6 @@ class ITFluxClientReactive extends AbstractITFluxClientReactive {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = "FLUX_DISABLE", matches = "true")
     void ping() {
 
         fluxClient
